@@ -186,6 +186,8 @@ func (c *consumer) offsetBox() {
 	c.Offset = new(offset)
 	frame, _ := gtk.FrameNew("Offset")
 	frame.SetMarginStart(35)
+	frame.SetShadowType(gtk.SHADOW_NONE)
+
 	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 0)
 	var btn *gtk.RadioButton
 	bnew, _ := gtk.RadioButtonNewWithLabelFromWidget(btn, "Newest")
