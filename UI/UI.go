@@ -13,10 +13,10 @@ type UI struct {
 	width       int
 	height      int
 	window      *gtk.Window
-	Items       *items
+	Widgets     *widgets
 }
 
-type items struct {
+type widgets struct {
 	TopBar    *topBar
 	WorkArea  *workArea
 	StatusBar *statusBar
@@ -25,19 +25,18 @@ type items struct {
 
 func NewUI(windowTitle string, width, height int) *UI {
 	window := initGTK(windowTitle)
-	gtkItems := newItems()
 
 	return &UI{
 		windowTitle: windowTitle,
 		width:       width,
 		height:      height,
 		window:      window,
-		Items:       gtkItems,
+		Widgets:     newWidgets(),
 	}
 }
 
 func (u *UI) Render() {
-	u.window.Add(u.Items.box)
+	u.window.Add(u.Widgets.box)
 	u.window.SetDefaultSize(u.width, u.height)
 	u.setAppIco()
 	u.window.ShowAll()
@@ -53,8 +52,8 @@ func (u *UI) setAppIco() {
 }
 
 func (u *UI) SensitiveAll(sensitive bool) {
-	u.Items.TopBar.Box.SetSensitive(sensitive)
-	u.Items.WorkArea.Notebook.SetSensitive(sensitive)
+	u.Widgets.TopBar.Box.SetSensitive(sensitive)
+	u.Widgets.WorkArea.Notebook.SetSensitive(sensitive)
 }
 
 func initGTK(winTitle string) *gtk.Window {
@@ -65,17 +64,17 @@ func initGTK(winTitle string) *gtk.Window {
 	return window
 }
 
-func newItems() *items {
-	items := new(items)
-	items.TopBar = newTopBar()
-	items.WorkArea = newWorkArea()
-	items.box, _ = gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
-	items.StatusBar = newStatusBar()
-	items.pack()
-	return items
+func newWidgets() *widgets {
+	widgets := new(widgets)
+	widgets.TopBar = newTopBar()
+	widgets.WorkArea = newWorkArea()
+	widgets.box, _ = gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
+	widgets.StatusBar = newStatusBar()
+	widgets.pack()
+	return widgets
 }
 
-func (i *items) pack() {
+func (i *widgets) pack() {
 	i.box.PackStart(i.TopBar.Box, false, false, 5)
 	sep, _ := gtk.SeparatorNew(gtk.ORIENTATION_HORIZONTAL)
 	i.box.PackStart(sep, false, false, 0)
@@ -84,5 +83,5 @@ func (i *items) pack() {
 }
 
 func (u *UI) ConsumerAutoscroll() bool {
-	return u.Items.WorkArea.Consumer.AutoScroll.Switch.GetActive()
+	return u.Widgets.WorkArea.Consumer.AutoScroll.Switch.GetActive()
 }

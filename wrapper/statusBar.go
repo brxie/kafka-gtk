@@ -12,7 +12,7 @@ func newStatusBar(UI *UI.UI, statusChan *chan interface{}) {
 		select {
 		case text := <-*statusChan:
 			t := fmt.Sprintf("%s", text)
-			UI.Items.StatusBar.Push(&t)
+			UI.Widgets.StatusBar.Push(&t)
 			return true
 		default:
 			return true

@@ -14,6 +14,7 @@ func newWorkArea() *workArea {
 	workArea := new(workArea)
 	workArea.Notebook, _ = gtk.NotebookNew()
 	workArea.Consumer = newConsumer()
+	workArea.Producer = newProducer()
 	workArea.pack()
 	return workArea
 }
@@ -23,6 +24,5 @@ func (w *workArea) pack() {
 	w.Notebook.AppendPage(w.Consumer.mainBox, clabel)
 
 	plabel, _ := gtk.LabelNew("Producer")
-	label, _ := gtk.LabelNew("TO BE DONE")
-	w.Notebook.AppendPage(label, plabel)
+	w.Notebook.AppendPage(w.Producer.mainBox, plabel)
 }

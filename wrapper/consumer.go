@@ -36,20 +36,20 @@ func newConsumer(kafka *kafka.KafkaConsumer, UI *UI.UI, statusChan *chan interfa
 }
 
 func (c *consumer) onClickRead() {
-	c.UI.Items.WorkArea.Consumer.ReadButton.Connect("clicked", func() {
+	c.UI.Widgets.WorkArea.Consumer.ReadButton.Connect("clicked", func() {
 		partConsumer, err := c.kafkaConsumer.NewPartitionConsumer(c.readFromOffset())
 		if err != nil {
 			c.setStatus(err)
 			return
 		}
 
-		c.UI.Items.WorkArea.Consumer.ReadButton.SetSensitive(false)
-		c.UI.Items.WorkArea.Consumer.StopButton.SetSensitive(true)
-		c.UI.Items.WorkArea.Consumer.Offset.Frame.SetSensitive(false)
-		c.UI.Items.TopBar.BtnDisct.SetSensitive(false)
+		c.UI.Widgets.WorkArea.Consumer.ReadButton.SetSensitive(false)
+		c.UI.Widgets.WorkArea.Consumer.StopButton.SetSensitive(true)
+		c.UI.Widgets.WorkArea.Consumer.Offset.Frame.SetSensitive(false)
+		c.UI.Widgets.TopBar.BtnDisct.SetSensitive(false)
 		c.setStatus("Reading...")
 
-		buff, _ := c.UI.Items.WorkArea.Consumer.TextArea.GetBuffer()
+		buff, _ := c.UI.Widgets.WorkArea.Consumer.TextArea.GetBuffer()
 		buff.SetText("")
 
 		var msgCnt int64
@@ -68,7 +68,7 @@ func (c *consumer) onClickRead() {
 				c.mu.Unlock()
 
 				if c.UI.ConsumerAutoscroll() {
-					c.UI.Items.WorkArea.Consumer.ScrollDown()
+					c.UI.Widgets.WorkArea.Consumer.ScrollDown()
 				}
 				// dust off buffer when grows up to ~500MB
 				if buff.GetCharCount() > 0x1DFFFFFF {
@@ -95,7 +95,7 @@ func (c *consumer) drainBuffer(buff *gtk.TextBuffer) {
 
 func (c *consumer) makeLine(msg *sarama.ConsumerMessage, count *int64) *bytes.Buffer {
 	var line bytes.Buffer
-	msgCfg := c.UI.Items.WorkArea.Consumer.MsgConfig
+	msgCfg := c.UI.Widgets.WorkArea.Consumer.MsgConfig
 	if msgCfg.BtnCount.GetActive() {
 		line.WriteString(fmt.Sprintf("%d:\t", *count))
 	}
@@ -122,29 +122,29 @@ func (c *consumer) makeLine(msg *sarama.ConsumerMessage, count *int64) *bytes.Bu
 }
 
 func (c *consumer) readFromOffset() int64 {
-	if c.UI.Items.WorkArea.Consumer.Offset.NewestBtn.GetActive() {
+	if c.UI.Widgets.WorkArea.Consumer.Offset.NewestBtn.GetActive() {
 		return kafka.OFFSET_NEWEST
 	}
 	return kafka.OFFSET_OLDEST
 }
 
 func (c *consumer) onClickStop() {
-	c.UI.Items.WorkArea.Consumer.StopButton.Connect("clicked", func() {
-		c.UI.Items.WorkArea.Consumer.ReadButton.SetSensitive(true)
-		c.UI.Items.WorkArea.Consumer.StopButton.SetSensitive(false)
-		c.UI.Items.WorkArea.Consumer.Offset.Frame.SetSensitive(true)
-		c.UI.Items.TopBar.BtnDisct.SetSensitive(true)
+	c.UI.Widgets.WorkArea.Consumer.StopButton.Connect("clicked", func() {
+		c.UI.Widgets.WorkArea.Consumer.ReadButton.SetSensitive(true)
+		c.UI.Widgets.WorkArea.Consumer.StopButton.SetSensitive(false)
+		c.UI.Widgets.WorkArea.Consumer.Offset.Frame.SetSensitive(true)
+		c.UI.Widgets.TopBar.BtnDisct.SetSensitive(true)
 		c.sigINT <- true
 	})
 
 }
 
 func (c *consumer) onClickClear() {
-	c.UI.Items.WorkArea.Consumer.ClearButton.SetName("foo")
-	c.UI.Items.WorkArea.Consumer.ClearButton.Connect("clicked", func() {
+	c.UI.Widgets.WorkArea.Consumer.ClearButton.SetName("foo")
+	c.UI.Widgets.WorkArea.Consumer.ClearButton.Connect("clicked", func() {
 		defer c.mu.Unlock()
 		c.mu.Lock()
-		buff, _ := c.UI.Items.WorkArea.Consumer.TextArea.GetBuffer()
+		buff, _ := c.UI.Widgets.WorkArea.Consumer.TextArea.GetBuffer()
 		buff.SetText("")
 	})
 }

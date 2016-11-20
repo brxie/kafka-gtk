@@ -1,6 +1,8 @@
 package UI
 
-import "github.com/gotk3/gotk3/gtk"
+import (
+	"github.com/gotk3/gotk3/gtk"
+)
 
 type consumer struct {
 	mainBox     *gtk.Box
@@ -41,6 +43,9 @@ type msgConfig struct {
 
 func newConsumer() *consumer {
 	consumer := new(consumer)
+	consumer.mainBox, _ = gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
+	consumer.menuBox, _ = gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 10)
+
 	consumer.offsetBox()
 	consumer.autoScrollSwitch()
 	consumer.buttons()
@@ -50,18 +55,22 @@ func newConsumer() *consumer {
 	return consumer
 }
 
+func (c *consumer) ScrollDown() {
+	adj := c.scrollWin.GetVAdjustment()
+	adj.SetValue(adj.GetUpper() - adj.GetPageSize())
+	c.scrollWin.SetVAdjustment(adj)
+}
+
 func (c *consumer) pack() {
 	c.mainBox.PackStart(c.menuBox, false, true, 0)
 	c.menuBox.PackStart(c.MsgConfig.Expander, false, true, 0)
 	c.mainBox.SetMarginTop(5)
 
-	c.textFrame.Add(c.scrollWin)
 	c.mainBox.PackStart(c.textFrame, true, true, 1)
 }
 
 func (c *consumer) buttons() {
-	mainBox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
-	menuBox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 10)
+
 	btnBox, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 0)
 
 	readBtn, _ := gtk.ButtonNew()
@@ -83,10 +92,8 @@ func (c *consumer) buttons() {
 	btnBox.Add(c.AutoScroll.Box)
 	btnBox.Add(c.Offset.Frame)
 
-	menuBox.PackStart(btnBox, true, false, 0)
+	c.menuBox.PackStart(btnBox, true, false, 0)
 
-	c.mainBox = mainBox
-	c.menuBox = menuBox
 	c.ReadButton = readBtn
 	c.StopButton = stopBtn
 	c.ClearButton = clrBtn
@@ -106,19 +113,14 @@ func (c *consumer) outputWindow() {
 	scrollWin.Add(textArea)
 
 	textFrame, _ := gtk.FrameNew("output")
-	textFrame.SetShadowType(gtk.SHADOW_IN)
 	textFrame.SetMarginStart(2)
 	textFrame.SetMarginEnd(2)
 	textFrame.SetMarginBottom(2)
+	textFrame.Add(scrollWin)
+
 	c.TextArea = textArea
 	c.textFrame = textFrame
 	c.scrollWin = scrollWin
-}
-
-func (c *consumer) ScrollDown() {
-	adj := c.scrollWin.GetVAdjustment()
-	adj.SetValue(adj.GetUpper() - adj.GetPageSize())
-	c.scrollWin.SetVAdjustment(adj)
 }
 
 func (c *consumer) autoScrollSwitch() {
