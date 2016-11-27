@@ -9,7 +9,7 @@ type KafkaProducer struct {
 	ClientID string
 }
 
-func NewKafkaProducer(consumer *sarama.Consumer) *KafkaProducer {
+func NewKafkaProducer() *KafkaProducer {
 	prod := new(KafkaProducer)
 	prod.ClientID = "KafkaGTK"
 	return prod
@@ -18,9 +18,7 @@ func NewKafkaProducer(consumer *sarama.Consumer) *KafkaProducer {
 func (k *KafkaProducer) Connect() error {
 	config := sarama.NewConfig()
 	config.ClientID = k.ClientID
-
 	producer, err := sarama.NewSyncProducer([]string{k.Address}, config)
-
 	if err != nil {
 		return err
 	}

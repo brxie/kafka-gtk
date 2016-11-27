@@ -1,14 +1,12 @@
 package UI
 
-import (
-	"github.com/gotk3/gotk3/gtk"
-)
+import "github.com/gotk3/gotk3/gtk"
 
 type producer struct {
 	mainBox  *gtk.Box
-	partiton *partition
-	input    *input
-	launcher *launcher
+	Partiton *partition
+	Input    *input
+	Launcher *launcher
 }
 
 type partition struct {
@@ -19,14 +17,15 @@ type partition struct {
 }
 
 type input struct {
-	frame    *gtk.Frame
-	keyEntry *gtk.Entry
-	box      *gtk.Box
+	frame      *gtk.Frame
+	KeyEntry   *gtk.Entry
+	ValueEntry *gtk.Entry
+	box        *gtk.Box
 }
 
 type launcher struct {
 	box    *gtk.Box
-	button *gtk.Button
+	Button *gtk.Button
 }
 
 func newProducer() *producer {
@@ -42,24 +41,33 @@ func newProducer() *producer {
 func (p *producer) pack() {
 	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 0)
 
-	box.PackStart(p.partiton.box, false, false, 0)
-	box.PackStart(p.input.box, true, true, 0)
-	box.PackStart(p.launcher.box, false, false, 0)
+	box.PackStart(p.Partiton.box, false, false, 0)
+	box.PackStart(p.Input.box, true, true, 0)
+	box.PackStart(p.Launcher.box, false, false, 0)
 	p.mainBox.PackStart(box, true, true, 0)
 }
 
 func (p *producer) partitionBox() {
-	p.partiton = new(partition)
+	p.Partiton = new(partition)
 
 	frame, _ := gtk.FrameNew("Partition")
 	frame.SetShadowType(gtk.SHADOW_NONE)
 
+	adjust, _ := gtk.AdjustmentNew(0, 0, 999, 1, 0, 0)
+	spinBtn, _ := gtk.SpinButtonNew(adjust, 0, 0)
+
 	checkBtn, _ := gtk.CheckButtonNew()
 	checkBtn.SetLabel("Auto")
 	checkBtn.SetTooltipText("Assign automatically")
+	checkBtn.Connect("toggled", func() {
+		if checkBtn.GetActive() {
+			spinBtn.SetSensitive(false)
+		} else {
+			spinBtn.SetSensitive(true)
+		}
+	})
+	checkBtn.SetActive(true)
 
-	adjust, _ := gtk.AdjustmentNew(0, 0, 999, 1, 0, 0)
-	spinBtn, _ := gtk.SpinButtonNew(adjust, 0, 0)
 	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 0)
 	box.SetVAlign(gtk.ALIGN_START)
 
@@ -71,14 +79,14 @@ func (p *producer) partitionBox() {
 	frame.Add(insiteBox)
 	box.PackStart(frame, false, false, 0)
 
-	p.partiton.box = box
-	p.partiton.frame = frame
-	p.partiton.checkBtn = checkBtn
-	p.partiton.spinBtn = spinBtn
+	p.Partiton.box = box
+	p.Partiton.frame = frame
+	p.Partiton.checkBtn = checkBtn
+	p.Partiton.spinBtn = spinBtn
 }
 
 func (p *producer) inputWindow() {
-	p.input = new(input)
+	p.Input = new(input)
 
 	keyEntry, _ := gtk.EntryNew()
 	keyEntry.SetMarginStart(5)
@@ -104,22 +112,24 @@ func (p *producer) inputWindow() {
 	box.PackStart(textFrame, true, true, 0)
 	box.SetVAlign(gtk.ALIGN_START)
 
-	p.input.keyEntry = keyEntry
-	p.input.frame = textFrame
+	p.Input.KeyEntry = keyEntry
+	p.Input.ValueEntry = valueEntry
+	p.Input.frame = textFrame
 
-	p.input.box = box
+	p.Input.box = box
 }
 
 func (p *producer) sendButton() {
-	p.launcher = new(launcher)
+	p.Launcher = new(launcher)
 
 	button, _ := gtk.ButtonNew()
 	button.SetLabel("Send")
 	button.SetMarginTop(18)
+	button.SetSensitive(false)
 
 	box, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
 	box.PackStart(button, false, false, 0)
 
-	p.launcher.box = box
-	p.launcher.button = button
+	p.Launcher.box = box
+	p.Launcher.Button = button
 }

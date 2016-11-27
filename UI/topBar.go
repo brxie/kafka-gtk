@@ -32,7 +32,7 @@ func newTopBar() *topBar {
 
 	// entries
 	topBar.HostEntry, _ = gtk.EntryNew()
-	topBar.HostEntry.SetText("192.81.223.90:9092")
+	topBar.HostEntry.SetText("localhost:9092")
 	topBar.HostEntry.SetTooltipText("Kafka broker host:port")
 	topBar.HostEntry.SetMarginStart(5)
 	topBar.HostEntry.SetWidthChars(20)
@@ -43,14 +43,14 @@ func newTopBar() *topBar {
 	topBar.TopicEntry.SetTooltipText("Kafka topic")
 	topBar.TopicEntry.SetMarginStart(10)
 	topBar.TopicEntry.SetEditable(true)
-	topBar.TopicEntry.SetWidthChars(15)
+	topBar.TopicEntry.SetWidthChars(25)
 
 	topBar.ClientIDEntry, _ = gtk.EntryNew()
 	topBar.ClientIDEntry.SetText("KafkaGTK")
 	topBar.ClientIDEntry.SetTooltipText("Kafka client ID")
 	topBar.ClientIDEntry.SetMarginEnd(5)
 	topBar.ClientIDEntry.SetEditable(true)
-	topBar.ClientIDEntry.SetWidthChars(15)
+	topBar.ClientIDEntry.SetWidthChars(10)
 
 	topBar.Box.PackStart(topBar.HostEntry, false, false, 0)
 	topBar.Box.PackStart(btnBox, false, false, 0)

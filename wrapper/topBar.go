@@ -10,13 +10,18 @@ import (
 
 type topBar struct {
 	kafkaConsumer *kafka.KafkaConsumer
+	kafkaProducer *kafka.KafkaProducer
 	UI            *UI.UI
 	statusChan    *chan interface{}
 }
 
-func newTopBar(kafka *kafka.KafkaConsumer, UI *UI.UI, statusChan *chan interface{}) *topBar {
+func newTopBar(kafkaConsumer *kafka.KafkaConsumer,
+	kafkaProduecer *kafka.KafkaProducer, UI *UI.UI,
+	statusChan *chan interface{}) *topBar {
+
 	tb := new(topBar)
-	tb.kafkaConsumer = kafka
+	tb.kafkaConsumer = kafkaConsumer
+	tb.kafkaProducer = kafkaProduecer
 	tb.UI = UI
 	tb.statusChan = statusChan
 
@@ -29,17 +34,27 @@ func newTopBar(kafka *kafka.KafkaConsumer, UI *UI.UI, statusChan *chan interface
 func (t *topBar) onClickConnect() {
 	t.UI.Widgets.TopBar.BtnConnect.Connect("clicked", func() {
 		var err error
-		var connecting bool
+		connecting := true
 		go func() {
+			defer func() { connecting = false }()
+			t.setStatus("Connecting...")
 			t.kafkaConsumer.Address = t.GetAddr()
 			t.kafkaConsumer.Topic = t.GetTopic()
 			t.kafkaConsumer.ClientID = t.GetClientID()
 			err = t.kafkaConsumer.Connect()
-			connecting = true
+			if err != nil {
+				return
+			}
+
+			t.kafkaProducer.Address = t.GetAddr()
+			t.kafkaProducer.Topic = t.GetTopic()
+			t.kafkaProducer.ClientID = t.GetClientID()
+			err = t.kafkaProducer.Connect()
 		}()
+
 		t.UI.Widgets.TopBar.BtnConnect.SetSensitive(false)
 		glib.IdleAdd(func() bool {
-			if !connecting {
+			if connecting {
 				return true
 			}
 			t.UI.Widgets.TopBar.BtnConnect.SetSensitive(true)
@@ -55,6 +70,7 @@ func (t *topBar) onClickConnect() {
 			t.UI.Widgets.TopBar.TopicEntry.SetSensitive(false)
 			t.UI.Widgets.TopBar.ClientIDEntry.SetSensitive(false)
 			t.UI.Widgets.WorkArea.Consumer.ReadButton.SetSensitive(true)
+			t.UI.Widgets.WorkArea.Producer.Launcher.Button.SetSensitive(true)
 			t.setStatus("Connected")
 
 			return false
@@ -77,6 +93,7 @@ func (t *topBar) onClickDisconnect() {
 		t.UI.Widgets.TopBar.ClientIDEntry.SetSensitive(true)
 		t.UI.Widgets.WorkArea.Consumer.ReadButton.SetSensitive(false)
 		t.UI.Widgets.WorkArea.Consumer.StopButton.SetSensitive(false)
+		t.UI.Widgets.WorkArea.Producer.Launcher.Button.SetSensitive(false)
 		t.setStatus("Disconnected")
 	})
 }

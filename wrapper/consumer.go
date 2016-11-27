@@ -46,7 +46,9 @@ func (c *consumer) onClickRead() {
 		c.UI.Widgets.WorkArea.Consumer.ReadButton.SetSensitive(false)
 		c.UI.Widgets.WorkArea.Consumer.StopButton.SetSensitive(true)
 		c.UI.Widgets.WorkArea.Consumer.Offset.Frame.SetSensitive(false)
+		c.UI.Widgets.WorkArea.Consumer.MsgConfig.Box.SetSensitive(false)
 		c.UI.Widgets.TopBar.BtnDisct.SetSensitive(false)
+
 		c.setStatus("Reading...")
 
 		buff, _ := c.UI.Widgets.WorkArea.Consumer.TextArea.GetBuffer()
@@ -133,6 +135,7 @@ func (c *consumer) onClickStop() {
 		c.UI.Widgets.WorkArea.Consumer.ReadButton.SetSensitive(true)
 		c.UI.Widgets.WorkArea.Consumer.StopButton.SetSensitive(false)
 		c.UI.Widgets.WorkArea.Consumer.Offset.Frame.SetSensitive(true)
+		c.UI.Widgets.WorkArea.Consumer.MsgConfig.Box.SetSensitive(true)
 		c.UI.Widgets.TopBar.BtnDisct.SetSensitive(true)
 		c.sigINT <- true
 	})
