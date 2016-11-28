@@ -26,13 +26,28 @@ func (p *producer) onClickSend() {
 		// Use glib and add function to default main loop,
 		// pass function callback, executed until false is return
 		glib.IdleAdd(func() bool {
-			err := p.kafkaProducer.Produce(p.getKey(), p.getValue())
+			err := p.kafkaProducer.Produce(p.getKey(), p.getValue(), p.getPartitionNumber())
 			if err != nil {
 				p.setStatus(err)
 			}
+			p.clearValueWindow()
 			return false
 		})
 	})
+}
+
+func (p *producer) getPartitionNumber() *int {
+	autoSelect := p.UI.Widgets.WorkArea.Producer.Partiton.CheckBtn.GetActive()
+	if autoSelect {
+		return nil
+	}
+	partnr := p.UI.Widgets.WorkArea.Producer.Partiton.SpinBtn.GetValueAsInt()
+	return &partnr
+}
+
+func (p *producer) clearValueWindow() {
+	buff, _ := p.UI.Widgets.WorkArea.Producer.Input.ValueWindow.GetBuffer()
+	buff.SetText("")
 }
 
 func (p *producer) getKey() *string {
@@ -41,9 +56,10 @@ func (p *producer) getKey() *string {
 }
 
 func (p *producer) getValue() *string {
-	//val, _ := p.UI.Widgets.WorkArea.Producer.Input.ValueEntry.GetText()
-	val := "aa"
-	return &val
+	buff, _ := p.UI.Widgets.WorkArea.Producer.Input.ValueWindow.GetBuffer()
+	start, end := buff.GetBounds()
+	text, _ := buff.GetText(start, end, true)
+	return &text
 }
 
 func (p *producer) setStatus(status interface{}) {
