@@ -145,7 +145,6 @@ func (c *consumer) msgCfg() {
 
 	exp, _ := gtk.ExpanderNew("")
 	exp.SetLabel("Values")
-	exp.SetExpanded(true)
 	box, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
 	box.SetMarginStart(5)
 
