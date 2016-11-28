@@ -20,9 +20,9 @@ func newTopBar() *topBar {
 
 	// buttons
 	btnBox, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 0)
-	topBar.BtnConnect, _ = gtk.ButtonNewFromIconName("goa-panel-symbolic", 2)
+	topBar.BtnConnect, _ = gtk.ButtonNewFromIconName("network-wired", 4)
 	topBar.BtnConnect.SetTooltipText("Connect")
-	topBar.BtnDisct, _ = gtk.ButtonNewFromIconName("edit-delete-symbolic", 2)
+	topBar.BtnDisct, _ = gtk.ButtonNewFromIconName("edit-delete", 4)
 	topBar.BtnDisct.SetTooltipText("Disconnect")
 	topBar.BtnDisct.SetSensitive(false)
 	btnBox.PackStart(topBar.BtnConnect, false, false, 0)
