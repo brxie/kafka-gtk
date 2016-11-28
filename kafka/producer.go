@@ -1,10 +1,6 @@
 package kafka
 
-import (
-	"fmt"
-
-	"github.com/Shopify/sarama"
-)
+import "github.com/Shopify/sarama"
 
 type KafkaProducer struct {
 	producer *sarama.SyncProducer
@@ -49,7 +45,6 @@ func (k *KafkaProducer) assignPartition(partition *int) int32 {
 }
 
 func (k *KafkaProducer) createMessage(key, value *string, partition int32) *sarama.ProducerMessage {
-	fmt.Println(partition)
 	message := &sarama.ProducerMessage{Topic: k.Topic, Partition: partition}
 
 	if *key != "" {

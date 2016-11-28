@@ -73,16 +73,16 @@ func (c *consumer) buttons() {
 
 	btnBox, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 0)
 
-	readBtn, _ := gtk.ButtonNewFromIconName("media-playback-start", 4)
+	readBtn, _ := gtk.ButtonNewFromIconName("media-playback-start", 5)
 	readBtn.SetTooltipText("Read")
 	readBtn.SetSensitive(false)
 	readBtn.SetMarginStart(5)
 
-	stopBtn, _ := gtk.ButtonNewFromIconName("media-playback-stop", 4)
+	stopBtn, _ := gtk.ButtonNewFromIconName("media-playback-stop", 5)
 	stopBtn.SetTooltipText("Stop")
 	stopBtn.SetSensitive(false)
 
-	clrBtn, _ := gtk.ButtonNewFromIconName("edit-clear-all-symbolic", 4)
+	clrBtn, _ := gtk.ButtonNewFromIconName("edit-clear-all-symbolic", 5)
 	clrBtn.SetTooltipText("Clear")
 	clrBtn.SetMarginStart(5)
 
