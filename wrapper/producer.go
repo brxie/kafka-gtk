@@ -1,6 +1,8 @@
 package wrapper
 
 import (
+	"strings"
+
 	"github.com/brxie/kafka-gtk/UI"
 	"github.com/brxie/kafka-gtk/kafka"
 	"github.com/gotk3/gotk3/glib"
@@ -21,12 +23,12 @@ func newProducer(kafka *kafka.KafkaProducer, UI *UI.UI, statusChan *chan interfa
 }
 
 func (p *producer) onClickSend() {
-	p.UI.Widgets.WorkArea.Producer.Launcher.Button.Connect("clicked", func() {
+	p.UI.Widgets.WorkArea.Producer.Sender.Button.Connect("clicked", func() {
 		// GTK is not threadsave, we can not use goroutine here.
 		// Use glib and add function to default main loop,
 		// pass function callback, executed until false is return
 		glib.IdleAdd(func() bool {
-			err := p.kafkaProducer.Produce(p.getKey(), p.getValue(), p.getPartitionNumber())
+			err := p.kafkaProducer.Produce(p.getKey(), p.getValues(), p.getPartitionNumber())
 			if err != nil {
 				p.setStatus(err)
 			}
@@ -37,7 +39,7 @@ func (p *producer) onClickSend() {
 }
 
 func (p *producer) getPartitionNumber() *int {
-	autoSelect := p.UI.Widgets.WorkArea.Producer.Partiton.CheckBtn.GetActive()
+	autoSelect := p.UI.Widgets.WorkArea.Producer.Partiton.AutoBtn.GetActive()
 	if autoSelect {
 		return nil
 	}
@@ -55,11 +57,21 @@ func (p *producer) getKey() *string {
 	return &key
 }
 
-func (p *producer) getValue() *string {
+func (p *producer) getValues() []string {
 	buff, _ := p.UI.Widgets.WorkArea.Producer.Input.ValueWindow.GetBuffer()
 	start, end := buff.GetBounds()
 	text, _ := buff.GetText(start, end, true)
-	return &text
+
+	if p.splitMessagesActive() {
+		values := strings.Split(text, "\n")
+		return values
+	}
+	return []string{text}
+
+}
+
+func (p *producer) splitMessagesActive() bool {
+	return p.UI.Widgets.WorkArea.Producer.Sender.SplitLinesBtn.GetActive()
 }
 
 func (p *producer) setStatus(status interface{}) {

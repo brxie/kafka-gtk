@@ -26,13 +26,15 @@ func (k *KafkaProducer) Connect() error {
 	return nil
 }
 
-func (k *KafkaProducer) Produce(key, value *string, partition *int) error {
+func (k *KafkaProducer) Produce(key *string, values []string, partition *int) error {
 	var err error
-	msg := k.createMessage(key, value, k.assignPartition(partition))
-	_, _, err = (*k.producer).SendMessage(msg)
+	for _, val := range values {
+		msg := k.createMessage(key, &val, k.assignPartition(partition))
+		_, _, err = (*k.producer).SendMessage(msg)
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

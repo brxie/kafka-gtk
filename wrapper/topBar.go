@@ -70,7 +70,7 @@ func (t *topBar) onClickConnect() {
 			t.UI.Widgets.TopBar.TopicEntry.SetSensitive(false)
 			t.UI.Widgets.TopBar.ClientIDEntry.SetSensitive(false)
 			t.UI.Widgets.WorkArea.Consumer.ReadButton.SetSensitive(true)
-			t.UI.Widgets.WorkArea.Producer.Launcher.Button.SetSensitive(true)
+			t.UI.Widgets.WorkArea.Producer.Sender.Button.SetSensitive(true)
 			t.setStatus("Connected")
 
 			return false
@@ -93,7 +93,7 @@ func (t *topBar) onClickDisconnect() {
 		t.UI.Widgets.TopBar.ClientIDEntry.SetSensitive(true)
 		t.UI.Widgets.WorkArea.Consumer.ReadButton.SetSensitive(false)
 		t.UI.Widgets.WorkArea.Consumer.StopButton.SetSensitive(false)
-		t.UI.Widgets.WorkArea.Producer.Launcher.Button.SetSensitive(false)
+		t.UI.Widgets.WorkArea.Producer.Sender.Button.SetSensitive(false)
 		t.setStatus("Disconnected")
 	})
 }

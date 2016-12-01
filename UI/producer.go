@@ -6,14 +6,14 @@ type producer struct {
 	mainBox  *gtk.Box
 	Partiton *partition
 	Input    *input
-	Launcher *launcher
+	Sender   *sender
 }
 
 type partition struct {
-	box      *gtk.Box
-	frame    *gtk.Frame
-	CheckBtn *gtk.CheckButton
-	SpinBtn  *gtk.SpinButton
+	box     *gtk.Box
+	frame   *gtk.Frame
+	AutoBtn *gtk.CheckButton
+	SpinBtn *gtk.SpinButton
 }
 
 type input struct {
@@ -24,9 +24,10 @@ type input struct {
 	ValueWindow *gtk.TextView
 }
 
-type launcher struct {
-	box    *gtk.Box
-	Button *gtk.Button
+type sender struct {
+	box           *gtk.Box
+	Button        *gtk.Button
+	SplitLinesBtn *gtk.CheckButton
 }
 
 func newProducer() *producer {
@@ -34,7 +35,7 @@ func newProducer() *producer {
 	producer.mainBox, _ = gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 0)
 	producer.partitionBox()
 	producer.inputWindow()
-	producer.launcher()
+	producer.sender()
 	producer.pack()
 	return producer
 }
@@ -48,7 +49,7 @@ func (p *producer) pack() {
 	box.PackStart(p.Partiton.box, false, false, 0)
 	box.PackStart(p.Input.box, false, false, 0)
 
-	box.PackStart(p.Launcher.box, false, false, 0)
+	box.PackStart(p.Sender.box, false, false, 0)
 	p.mainBox.PackStart(box, true, true, 0)
 }
 
@@ -61,24 +62,24 @@ func (p *producer) partitionBox() {
 	adjust, _ := gtk.AdjustmentNew(0, 0, 999, 1, 0, 0)
 	SpinBtn, _ := gtk.SpinButtonNew(adjust, 0, 0)
 
-	checkBtn, _ := gtk.CheckButtonNew()
-	checkBtn.SetLabel("Auto")
-	checkBtn.SetTooltipText("Assign automatically")
-	checkBtn.Connect("toggled", func() {
-		if checkBtn.GetActive() {
+	autoBtn, _ := gtk.CheckButtonNew()
+	autoBtn.SetLabel("Auto")
+	autoBtn.SetTooltipText("Assign automatically")
+	autoBtn.Connect("toggled", func() {
+		if autoBtn.GetActive() {
 			SpinBtn.SetSensitive(false)
 		} else {
 			SpinBtn.SetSensitive(true)
 		}
 	})
-	checkBtn.SetActive(true)
+	autoBtn.SetActive(true)
 
 	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 0)
 	box.SetVAlign(gtk.ALIGN_START)
 
 	// GtkFrame can only contain one widget, we have to pack it into box
 	insiteBox, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 0)
-	insiteBox.PackStart(checkBtn, false, false, 2)
+	insiteBox.PackStart(autoBtn, false, false, 2)
 	insiteBox.PackStart(SpinBtn, false, false, 2)
 
 	frame.Add(insiteBox)
@@ -87,7 +88,7 @@ func (p *producer) partitionBox() {
 
 	p.Partiton.box = box
 	p.Partiton.frame = frame
-	p.Partiton.CheckBtn = checkBtn
+	p.Partiton.AutoBtn = autoBtn
 	p.Partiton.SpinBtn = SpinBtn
 }
 
@@ -95,8 +96,8 @@ func (p *producer) inputWindow() {
 	p.Input = new(input)
 
 	keyEntry, _ := gtk.EntryNew()
-	keyEntry.SetMarginStart(5)
-	keyEntry.SetMarginEnd(5)
+	keyEntry.SetMarginStart(2)
+	keyEntry.SetMarginEnd(2)
 
 	p.valueWindow()
 
@@ -143,17 +144,26 @@ func (p *producer) valueWindow() {
 	p.Input.ValueWindow = textArea
 }
 
-func (p *producer) launcher() {
-	p.Launcher = new(launcher)
+func (p *producer) sender() {
+	p.Sender = new(sender)
+
+	splitLinesBtn, _ := gtk.CheckButtonNew()
+	splitLinesBtn.SetLabel("Split new lines")
+	splitLinesBtn.SetTooltipText("Split message value on \\n character")
+	splitLinesBtn.SetMarginEnd(5)
 
 	button, _ := gtk.ButtonNew()
 	button.SetLabel("Send")
-
 	button.SetSensitive(false)
+	button.SetHExpand(true)
+	button.SetMarginStart(5)
+	button.SetMarginEnd(25)
 
-	box, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
-	box.PackStart(button, false, false, 0)
+	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 0)
+	box.PackStart(button, true, true, 0)
+	box.PackStart(splitLinesBtn, false, false, 0)
 
-	p.Launcher.box = box
-	p.Launcher.Button = button
+	p.Sender.SplitLinesBtn = splitLinesBtn
+	p.Sender.box = box
+	p.Sender.Button = button
 }
