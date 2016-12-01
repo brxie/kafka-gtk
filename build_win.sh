@@ -1,3 +1,5 @@
 #!/bin/bash
 
-go build -o KafkaGTK.exe -ldflags -H=windowsgui kafka-gtk.go 
+windres -o main.syso main.rc
+go build -o KafkaGTK.exe  -ldflags "-w -s -H=windowsgui"
+
