@@ -18,6 +18,7 @@ func newProducer(kafka *kafka.KafkaProducer, UI *UI.UI, statusChan *chan interfa
 	producer := new(producer)
 	producer.kafkaProducer = kafka
 	producer.UI = UI
+	producer.statusChan = statusChan
 	producer.onClickSend()
 	return producer
 }
@@ -33,6 +34,7 @@ func (p *producer) onClickSend() {
 				p.setStatus(err)
 			}
 			p.clearValueWindow()
+			p.setStatus("Message sent")
 			return false
 		})
 	})

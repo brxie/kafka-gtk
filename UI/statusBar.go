@@ -22,5 +22,6 @@ func (s *statusBar) pack() {
 }
 
 func (s *statusBar) Push(text *string) {
+	s.bar.Pop(0)
 	s.bar.Push(0, *text)
 }

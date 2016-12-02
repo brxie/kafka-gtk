@@ -49,7 +49,7 @@ func (c *consumer) onClickRead() {
 		c.UI.Widgets.WorkArea.Consumer.MsgConfig.Box.SetSensitive(false)
 		c.UI.Widgets.TopBar.BtnDisct.SetSensitive(false)
 
-		c.setStatus("Reading...")
+		c.setStatus("Start reading")
 
 		buff, _ := c.UI.Widgets.WorkArea.Consumer.TextArea.GetBuffer()
 		buff.SetText("")
