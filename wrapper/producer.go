@@ -1,6 +1,7 @@
 package wrapper
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/brxie/kafka-gtk/UI"
@@ -29,12 +30,14 @@ func (p *producer) onClickSend() {
 		// Use glib and add function to default main loop,
 		// pass function callback, executed until false is return
 		glib.IdleAdd(func() bool {
-			err := p.kafkaProducer.Produce(p.getKey(), p.getValues(), p.getPartitionNumber())
+			values := p.getValues()
+			err := p.kafkaProducer.Produce(p.getKey(), values, p.getPartitionNumber())
 			if err != nil {
 				p.setStatus(err)
 			}
+			status := fmt.Sprintf("%d messages sent", len(values))
+			p.setStatus(status)
 			p.clearValueWindow()
-			p.setStatus("Message sent")
 			return false
 		})
 	})
